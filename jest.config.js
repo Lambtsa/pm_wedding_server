@@ -9,13 +9,13 @@ module.exports = {
   testEnvironment: "node",
   roots: ["<rootDir>"],
   coveragePathIgnorePatterns: ["/node_modules/"],
-  // collectCoverage: true,
-  // collectCoverageFrom: ["./src/**"],
-  // coverageThreshold: {
-  //   global: {
-  //     lines: 90,
-  //   },
-  // },
+  collectCoverage: true,
+  collectCoverageFrom: ["./src/**"],
+  coverageThreshold: {
+    global: {
+      lines: 50,
+    },
+  },
   modulePaths: [compilerOptions.baseUrl], // <-- This will be set to 'baseUrl' value
   moduleNameMapper: pathsToModuleNameMapper(
     compilerOptions.paths /*, { prefix: '<rootDir>/' } */,

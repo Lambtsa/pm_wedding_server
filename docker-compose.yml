@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  # DATABASE
+  db:
+    container_name: db
+    image: db
+
+  # API
+  api:
+    container_name: api
+    external_links:
+      - db
+    depends_on:
+      - db

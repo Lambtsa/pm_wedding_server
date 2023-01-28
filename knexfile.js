@@ -9,21 +9,11 @@ const isProd = process.env.NODE_ENV === "production";
 module.exports = {
   client: "pg",
   connection: {
-    host: isProd
-      ? process.env.AWS_DB_HOST
-      : process.env.AWS_DB_HOST_DEV || "localhost",
-    port: isProd
-      ? process.env.AWS_DB_PORT
-      : process.env.AWS_DB_PORT_DEV || 5433,
-    user: isProd
-      ? process.env.AWS_DB_USER
-      : process.env.AWS_DB_USER_DEV || "postgres",
-    password: isProd
-      ? process.env.AWS_DB_PASSWORD
-      : process.env.AWS_DB_PASSWORD_DEV || "postgres",
-    database: isProd
-      ? process.env.AWS_DATABASE
-      : process.env.AWS_DATABASE_DEV || "audiolinx",
+    host: isProd ? process.env.AWS_DB_HOST : "db",
+    port: isProd ? process.env.AWS_DB_PORT : 5432,
+    user: isProd ? process.env.AWS_DB_USER : "postgres",
+    password: isProd ? process.env.AWS_DB_PASSWORD : "postgres",
+    database: isProd ? process.env.AWS_DATABASE : "wedding",
     ssl: isProd ? { rejectUnauthorized: false } : false,
   },
   searchPath: [process.env.SCHEMA || "postgres", "public"],

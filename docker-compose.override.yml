@@ -1,0 +1,57 @@
+version: "3.7"
+
+services:
+  # DATABASE
+  db:
+    image: postgres:14.3
+    container_name: db
+    restart: always
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=wedding
+    ports:
+      - 5433:5432
+    volumes:
+      - "./.postgres:/var/lib/postgresql/data"
+    networks:
+      - pm-network
+
+  # API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: api
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=wedding
+    ports:
+      - "80:8080"
+    volumes:
+      - .:/home/lambtsa/pm/server
+      - node_modules:/home/lambtsa/pm/server/node_modules
+    networks:
+      - pm-network
+
+networks:
+  pm-network:
+    driver: bridge
+
+volumes:
+  .postgres:
+  node_modules:

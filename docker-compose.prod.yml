@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  # DATABASE
+  db:
+    image: postgres:14.3
+    container_name: db
+    restart: always
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=wedding
+    ports:
+      - 5433:5432
+
+  # API
+  api:
+    container_name: api
+    restart: always
+    build: .
+    ports:
+      - 3000:80
+    external_links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=wedding

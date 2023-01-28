@@ -1,0 +1,15 @@
+FROM node:16.15.1
+
+ENV NODE_ENV=development
+
+WORKDIR /app
+
+COPY ["package.json", "package-lock.json*", "tsconfig.json", "./"]
+
+COPY . .
+
+RUN ls -a && npm install
+
+EXPOSE 8080
+
+CMD ["npm", "run", "dev"]

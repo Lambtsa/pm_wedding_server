@@ -13,6 +13,7 @@ import {
   NotFoundError,
   TooManyRequestsError,
 } from "@core/errors";
+import { AddContext } from "@middleware/context";
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use(
 /* ######################################## */
 /* Add db connection to middleware - This means that for each request we make a connection  */
 /* ######################################## */
-// app.use(AddContext());
+app.use(AddContext());
 app.use(express.static("public"));
 
 /* ######################################## */
