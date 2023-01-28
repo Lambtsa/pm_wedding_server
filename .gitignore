@@ -1,0 +1,16 @@
+# Envs
+.env.local
+.env
+
+# Coverage
+#/coverage
+
+# Node modules
+/node_modules
+
+# Deployment
+#/deploy
+
+# Build
+#/dist
+#/.postgres

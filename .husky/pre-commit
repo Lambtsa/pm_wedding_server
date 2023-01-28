@@ -1,0 +1,56 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Format using Prettier standards
+npm run format:fix ||
+(
+    echo 'Prettier Format Failed. Run running this again.';
+    false;
+)
+
+# Check ESLint Standards
+npm run lint:check ||
+(
+        echo 'There are linting errors 
+                ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+        false; 
+)
+
+# Check tsconfig standards
+npm run lint:tsc ||
+(
+    echo 'Failing typescript check
+            No point writing typescript if you write it badly.'
+    false;
+)
+
+# Run tests
+npm run test ||
+(
+    echo 'Some tests fail
+            Please verify why the tests are failing and start again'
+    false;
+)
+
+
+# If everything passes... Now we can commit
+# echo 'Code looks good to me... Trying to build now...'
+
+# npm run build ||
+# (
+#     echo 'Build has failed
+#             Next build failed: View the errors above to see why. 
+#     '
+#     false;
+# )
+
+git add . ||
+(
+    echo 'Issue adding files
+            `git add .` to add changed files failed.
+    '
+    false;
+)
+
+# If everything passes... Now we can commit
+echo '✅✅✅✅Everything is ready to be committed. Committing...'

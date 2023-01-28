@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2021",
+    "module": "commonjs",
+    "lib": ["ES2021"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "useUnknownInCatchVariables": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "paths": {
+      "@config": ["config/index"],
+      "@constants/*": ["constants/*"],
+      "@core/*": ["core/*"],
+      "@db/*": ["db/*"],
+      "@external": ["external/index"],
+      "@helpers/*": ["helpers/*"],
+      "@middleware/*": ["middleware/*"],
+      "@modules": ["modules/index"],
+      "@routes/*": ["routes/*"],
+      "@types": ["types/index"]
+    },
+    "typeRoots": ["./node_modules/@types", "./typings"]
+  },
+  "include": ["typings/**/*.ts", "src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "transpileOnly": true,
+    "exclude": ["node_modules"]
+  }
+}

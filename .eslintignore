@@ -1,0 +1,15 @@
+# Config
+.eslintrc.json
+
+# Node modules
+node_modules
+
+# Testing
+jest.config.js
+
+# Build folder
+dist
+
+# Database
+/db/**
+knexfile.js
