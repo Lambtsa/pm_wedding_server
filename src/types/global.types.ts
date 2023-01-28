@@ -8,4 +8,3 @@ export type HttpMethods =
   | "OPTIONS"
   | "TRACE"
   | "PATCH";
-

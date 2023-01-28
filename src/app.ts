@@ -8,7 +8,11 @@ import cors from "cors";
 
 import { config as appConfig } from "@config";
 import api from "@routes/index";
-import { CustomBaseError, NotFoundError, TooManyRequestsError } from "@core/errors";
+import {
+  CustomBaseError,
+  NotFoundError,
+  TooManyRequestsError,
+} from "@core/errors";
 
 const app = express();
 

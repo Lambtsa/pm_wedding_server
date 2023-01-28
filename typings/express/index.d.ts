@@ -1,4 +1,3 @@
-import { DeezerApi, SpotifyApi, YoutubeApi } from "@external";
 import Knex from "knex";
 
 /* @see https://stackoverflow.com/a/68641378/16334980 */
