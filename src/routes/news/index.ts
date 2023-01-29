@@ -78,9 +78,21 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+router.get("/", async (req: Request, res: Response, _next: NextFunction) => {
+  const {
+    context: { db },
+  } = req;
+
+  const newsItems = await News.db.select({
+    db,
+  });
+
+  return res.status(200).json(newsItems);
+});
+
 /* Method Middleware */
 router.use("/", (req: Request, _res: Response, next: NextFunction) => {
-  if (req.method !== "POST") {
+  if (req.method !== "POST" && req.method !== "GET") {
     const error = new MethodNotAllowedError();
     return next(error);
   }
