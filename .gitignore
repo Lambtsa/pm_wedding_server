@@ -12,5 +12,5 @@
 #/deploy
 
 # Build
-#/dist
-#/.postgres
+/dist
+/.postgres

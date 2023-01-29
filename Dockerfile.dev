@@ -12,4 +12,8 @@ RUN ls -a && npm install
 
 EXPOSE 8080
 
-CMD ["npm", "run", "dev"]
+# Run all new migrations on startup. 
+# TODO: Normally this should not wipe the db but needs verifying
+CMD ["npm", "run", "migrate:dev"]
+
+ENTRYPOINT ["npm", "run", "dev"]
