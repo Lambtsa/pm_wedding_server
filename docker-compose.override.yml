@@ -21,6 +21,11 @@ services:
       - "./.postgres:/var/lib/postgresql/data"
     networks:
       - pm-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   # API
   api:
@@ -30,7 +35,8 @@ services:
     container_name: api
     restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - .env.local
     environment:
@@ -45,22 +51,9 @@ services:
     volumes:
       - .:/app
       - node_modules:/app/node_modules
-    # volumes:
-    #   - .:/home/lambtsa/pm/server
-    #   - node_modules:/home/lambtsa/pm/server/node_modules
     networks:
       - pm-network
-
-  # Once everything is setup
-  # script:
-  #   image: node:16.15.1-alpine
-  #   working_dir: /app
-  #   depends_on:
-  #     - api
-  #   restart: "no"
-  #   # volumes:
-  #   #   - /setup/setup.sh:/setup.sh
-  #   entrypoint: ["/app/setup/setup.sh"]
+    command: ["npm", "run", "migrate:dev"]
 
 networks:
   pm-network:

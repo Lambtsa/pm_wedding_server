@@ -1,9 +1,12 @@
+import { ZodError, ZodSchema } from "zod";
+
 export enum CustomApiErrorMessages {
   NoAccessToken = "No access token",
   IncorrectInput = "Input data is incorrect or incomplete",
   NotFound = "Endpoint doesn't exist",
   IncorrectMethod = "Only POST method is available",
   TooManyRequests = "You sent too many requests. Please wait a while then try again",
+  NewsDescriptionConflict = "Cannot have the same title and description",
 }
 
 export class CustomBaseError extends Error {
@@ -60,6 +63,42 @@ export class BadRequestError extends CustomBaseError {
 
     // 👇️ because we are extending a built-in class
     Object.setPrototypeOf(this, BadRequestError.prototype);
+  }
+}
+
+export class CustomZodError<T extends ZodSchema> extends CustomBaseError {
+  statusCode = 400;
+  error: ZodError;
+
+  constructor(error: ZodError<T>) {
+    super();
+    this.error = error;
+
+    // 👇️ because we are extending a built-in class
+    Object.setPrototypeOf(this, CustomZodError.prototype);
+  }
+
+  get errors() {
+    return this.error.issues.flatMap((issue) => {
+      return issue.path.map((field) => ({
+        type: issue.message,
+        field,
+      }));
+    });
+  }
+}
+
+export class DbConflictError extends CustomBaseError {
+  statusCode = 400;
+  message: string;
+
+  constructor(message: string) {
+    super(message);
+
+    this.message = message;
+
+    // 👇️ because we are extending a built-in class
+    Object.setPrototypeOf(this, DbConflictError.prototype);
   }
 }
 

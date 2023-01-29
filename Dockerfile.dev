@@ -14,6 +14,6 @@ EXPOSE 8080
 
 # Run all new migrations on startup. 
 # TODO: Normally this should not wipe the db but needs verifying
-CMD ["npm", "run", "migrate:dev"]
+CMD ["npm run migrate:dev"]
 
 ENTRYPOINT ["npm", "run", "dev"]

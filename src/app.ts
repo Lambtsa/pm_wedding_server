@@ -10,6 +10,7 @@ import { config as appConfig } from "@config";
 import api from "@routes/index";
 import {
   CustomBaseError,
+  CustomZodError,
   NotFoundError,
   TooManyRequestsError,
 } from "@core/errors";
@@ -72,7 +73,18 @@ app.use(
   (err: CustomBaseError, _: Request, res: Response, _next: NextFunction) => {
     console.log({ err });
     const statusCode = err.statusCode || 500;
-    res.status(statusCode).send();
+
+    if (err instanceof CustomZodError) {
+      console.log("here");
+      return res.status(statusCode).json(err.errors);
+    }
+
+    if (statusCode >= 400 && statusCode < 500) {
+      return res.status(statusCode).json({
+        message: err.message,
+      });
+    }
+    return res.status(statusCode).send();
   },
 );
 
