@@ -5,6 +5,9 @@ declare namespace NodeJS {
   interface ProcessEnv {
     readonly PORT: string;
 
+    readonly JWT_SECRET: string;
+    readonly AUTH_USER: string;
+
     readonly POSTGRES_HOST: string;
     readonly POSTGRES_PORT: number;
     readonly POSTGRES_USER: string;

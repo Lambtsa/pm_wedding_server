@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 
 import {
+  AuthenticationError,
   BadRequestError,
   CustomApiErrorMessages,
   DbConflictError,
@@ -12,6 +13,7 @@ import { Knex } from "knex";
 import * as z from "zod";
 import { TypeOf } from "zod";
 import { randomEmoji } from "@helpers/emoji";
+import { decodeToken } from "@helpers/jwt";
 
 const router = express.Router();
 
@@ -25,18 +27,39 @@ type NewsInputType = TypeOf<typeof newsInputDataSchema>;
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     /* ######################################## */
-    /* DATA */
+    /* Request parsing */
     /* ######################################## */
     const {
       body: { title: rawTitle, description: rawDescription },
       context: { db },
+      headers: { authorization },
     } = req;
 
     if (!rawTitle && !rawDescription) {
       next(new BadRequestError());
     }
 
-    /* Remove white space and validate data before inserting in table  */
+    const match = authorization?.match(/Bearer (.+)/);
+
+    if (!match) {
+      throw new AuthenticationError();
+    }
+
+    const token = match[1];
+
+    if (!token) {
+      throw new AuthenticationError();
+    }
+
+    const id = decodeToken(token);
+
+    if (id !== process.env.AUTH_USER) {
+      throw new AuthenticationError();
+    }
+
+    /* ######################################## */
+    /* DATA Validation */
+    /* ######################################## */
     const { title, description } = validateData<Omit<NewsInputType, "emoji">>(
       {
         title: rawTitle,

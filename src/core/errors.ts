@@ -7,6 +7,7 @@ export enum CustomApiErrorMessages {
   IncorrectMethod = "Only POST method is available",
   TooManyRequests = "You sent too many requests. Please wait a while then try again",
   NewsDescriptionConflict = "Cannot have the same title and description",
+  NoAuthentication = "You are not authorised to make this request",
 }
 
 export class CustomBaseError extends Error {
@@ -99,6 +100,18 @@ export class DbConflictError extends CustomBaseError {
 
     // 👇️ because we are extending a built-in class
     Object.setPrototypeOf(this, DbConflictError.prototype);
+  }
+}
+
+export class AuthenticationError extends CustomBaseError {
+  statusCode = 401;
+  message = CustomApiErrorMessages.NoAuthentication;
+
+  constructor(message?: string) {
+    super(message);
+
+    // 👇️ because we are extending a built-in class
+    Object.setPrototypeOf(this, AuthenticationError.prototype);
   }
 }
 
