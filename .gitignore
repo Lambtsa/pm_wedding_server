@@ -9,7 +9,7 @@
 /node_modules
 
 # Deployment
-#/deploy
+/deploy
 
 # Build
 /dist

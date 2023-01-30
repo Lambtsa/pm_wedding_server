@@ -19,7 +19,11 @@
     "seed:pre": "rm -rf /.dist && npm run build",
     "seed": "npm run seed:pre && knex seed:run",
     "migrate:prod": "NODE_ENV=production knex migrate:latest",
-    "migrate:dev": "NODE_ENV=development knex migrate:latest"
+    "migrate:dev": "NODE_ENV=development knex migrate:latest",
+    "remote:restart": "bash ./deploy/restart.sh",
+    "remote:destroy": "bash ./deploy/delete.sh",
+    "remote:start": "bash ./deploy/start.sh",
+    "remote:deploy": "bash ./deploy/pull.sh && bash ./deploy/deploy.sh && bash ./deploy/start.sh"
   },
   "keywords": [],
   "author": "",
