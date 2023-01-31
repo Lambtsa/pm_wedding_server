@@ -1,11 +1,13 @@
 import { User } from "@types";
-import { Knex } from "knex";
 
 interface InsertProps {
-  db: Knex<any, unknown[]>;
+  context: Express.RequestContext;
 }
 
-export const select = async ({ db }: InsertProps): Promise<User[]> => {
+export const select = async ({
+  context: { db, log },
+}: InsertProps): Promise<User[]> => {
+  log.info("Selecting all users");
   const search = await db
     .select("*")
     .from<User>("users")

@@ -4,27 +4,27 @@ import { Knex } from "knex";
 import { v4 as uuid } from "uuid";
 
 interface InsertProps {
-  db: Knex<any, unknown[]>;
+  context: Express.RequestContext;
   input: Pick<User, "name">;
-  trx: Knex.Transaction;
 }
 
 export const insert = async ({
-  db,
+  context: { db, log },
   input,
-  trx,
-}: InsertProps): Promise<User> => {
-  const search = await db<User>("users")
-    .insert({
-      id: uuid(),
-      name: input.name,
-    })
-    .transacting(trx)
-    .returning("*");
+}: InsertProps): Promise<User> =>
+  await db.transaction(async (trx: Knex.Transaction) => {
+    log.info("Inserting into Users table", { input });
+    const search = await db<User>("users")
+      .insert({
+        id: uuid(),
+        name: input.name,
+      })
+      .transacting(trx)
+      .returning("*");
 
-  if (!search[0]) {
-    throw new DbInsertError("There was an error while adding the user");
-  }
+    if (!search[0]) {
+      throw new DbInsertError("There was an error while adding the user");
+    }
 
-  return search[0];
-};
+    return search[0];
+  });

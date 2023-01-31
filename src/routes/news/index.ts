@@ -3,17 +3,15 @@ import express, { NextFunction, Request, Response } from "express";
 import {
   AuthenticationError,
   BadRequestError,
-  CustomApiErrorMessages,
-  DbConflictError,
   MethodNotAllowedError,
 } from "@core/errors";
 import { validateData } from "@helpers/sanitise";
 import { News } from "@modules";
-import { Knex } from "knex";
 import * as z from "zod";
 import { TypeOf } from "zod";
 import { randomEmoji } from "@helpers/emoji";
 import { decodeToken } from "@helpers/jwt";
+import WebSocket from "ws";
 
 const router = express.Router();
 
@@ -31,7 +29,7 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     /* ######################################## */
     const {
       body: { title: rawTitle, description: rawDescription },
-      context: { db },
+      context,
       headers: { authorization },
     } = req;
 
@@ -70,25 +68,24 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 
     const emoji = randomEmoji();
 
-    await db
-      .transaction(async (trx: Knex.Transaction) => {
-        await News.db.insert({
-          db,
-          input: {
-            title,
-            description,
-            emoji,
-          },
-          trx,
-        });
-      })
-      .catch((err: any) => {
-        if ("constraint" in err) {
-          throw new DbConflictError(
-            CustomApiErrorMessages.NewsDescriptionConflict,
-          );
-        }
-      });
+    await News.db.insert({
+      context,
+      input: {
+        title,
+        description,
+        emoji,
+      },
+    });
+
+    const recentNews = await News.db.select({ context });
+
+    context.socket.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({ event: "latestNews", payload: recentNews }),
+        );
+      }
+    });
 
     return res.status(200).json({
       title,
@@ -102,15 +99,11 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.get("/", async (req: Request, res: Response, _next: NextFunction) => {
-  const {
-    context: { db },
-  } = req;
+  const { context } = req;
 
-  const newsItems = await News.db.select({
-    db,
-  });
+  const recentNews = await News.db.select({ context });
 
-  return res.status(200).json(newsItems);
+  res.status(200).json(recentNews);
 });
 
 /* Method Middleware */
