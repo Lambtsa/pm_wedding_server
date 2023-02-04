@@ -1,2 +1,2 @@
 export * as News from "./news";
-export * as User from "./user";
+export * as Friend from "./friend";

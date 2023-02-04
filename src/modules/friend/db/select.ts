@@ -1,4 +1,4 @@
-import { User } from "@types";
+import { Friend } from "@types";
 
 interface InsertProps {
   context: Express.RequestContext;
@@ -6,11 +6,11 @@ interface InsertProps {
 
 export const select = async ({
   context: { db, log },
-}: InsertProps): Promise<User[]> => {
-  log.info("Selecting all users");
+}: InsertProps): Promise<Friend[]> => {
+  log.info("Selecting all friends");
   const search = await db
     .select("*")
-    .from<User>("users")
+    .from<Friend>("friends")
     .orderBy("created_at", "desc")
     .limit(3);
 

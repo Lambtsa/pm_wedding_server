@@ -1,2 +1,2 @@
-export * from "./insert";
+export * from "./upsert";
 export * from "./select";
