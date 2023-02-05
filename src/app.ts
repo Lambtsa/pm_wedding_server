@@ -5,6 +5,7 @@ import { rateLimit } from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
+import * as http from "http";
 
 import { config as appConfig } from "@config";
 import api from "@routes/index";
@@ -15,8 +16,19 @@ import {
   TooManyRequestsError,
 } from "@core/errors";
 import { AddContext } from "@middleware/context";
+import { createWebSocketServer } from "@core/websocket";
 
 const app = express();
+
+/* ######################################## */
+/* Initialise a web server */
+/* ######################################## */
+const server = http.createServer(app);
+
+/* ######################################## */
+/* Initialise websockets */
+/* ######################################## */
+const wss = createWebSocketServer({ server });
 
 const config =
   process.env.NODE_ENV === "production" ? appConfig.prod : appConfig.dev;
@@ -49,7 +61,7 @@ app.use(
 /* ######################################## */
 /* Add db connection to middleware - This means that for each request we make a connection  */
 /* ######################################## */
-app.use(AddContext());
+app.use(AddContext(wss));
 app.use(express.static("public"));
 
 /* ######################################## */
@@ -88,4 +100,4 @@ app.use(
   },
 );
 
-export default app;
+export default server;

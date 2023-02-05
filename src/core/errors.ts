@@ -7,6 +7,7 @@ export enum CustomApiErrorMessages {
   IncorrectMethod = "Only POST method is available",
   TooManyRequests = "You sent too many requests. Please wait a while then try again",
   NewsDescriptionConflict = "Cannot have the same title and description",
+  EmailConflict = "Email already exists",
   NoAuthentication = "You are not authorised to make this request",
 }
 

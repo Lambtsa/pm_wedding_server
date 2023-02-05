@@ -1,4 +1,4 @@
-import { News } from "@types";
+import { Friend } from "@types";
 
 interface InsertProps {
   context: Express.RequestContext;
@@ -6,12 +6,11 @@ interface InsertProps {
 
 export const select = async ({
   context: { db, log },
-}: InsertProps): Promise<News[]> => {
-  log.info("Selecting the 3 last news articles");
-
+}: InsertProps): Promise<Friend[]> => {
+  log.info("Selecting all friends");
   const search = await db
     .select("*")
-    .from<News>("news")
+    .from<Friend>("friends")
     .orderBy("created_at", "desc")
     .limit(3);
 
