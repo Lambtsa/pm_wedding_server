@@ -50,7 +50,7 @@ export const config: Config = {
   },
   prod: {
     cors: {
-      origin: "https://lambtsa.com",
+      origin: "https://pierreetmichelle2023.fr",
       methods: ["POST"],
     },
     rateLimiter: {
