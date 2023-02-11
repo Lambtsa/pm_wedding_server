@@ -9,6 +9,12 @@ export type HttpMethods =
   | "TRACE"
   | "PATCH";
 
+export enum Languages {
+  En = "EN",
+  Es = "ES",
+  Fr = "FR",
+}
+
 export enum ActivityType {
   Horse = "horse",
   Boules = "boules",

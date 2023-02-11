@@ -70,30 +70,6 @@ describe("validateData helper for object", () => {
       );
     }
   });
-
-  test("Input that has whitespace should be returned without", () => {
-    expect(
-      validateData({ artist: "Last Train    ", title: "Fragile" }, testSchema),
-    ).toHaveProperty("artist", "Last Train");
-    expect(
-      validateData({ artist: "   Last Train", title: "Fragile" }, testSchema),
-    ).toHaveProperty("artist", "Last Train");
-    expect(
-      validateData({ artist: "Last Train", title: "    Fragile" }, testSchema),
-    ).toHaveProperty("title", "Fragile");
-    expect(
-      validateData(
-        { artist: "   Last Train", title: "Fragile    " },
-        testSchema,
-      ),
-    ).toHaveProperty("title", "Fragile");
-  });
-
-  test("Input that has too much whitespace should be returned without only one", () => {
-    expect(
-      validateData({ artist: "Last  Train", title: "Fragile" }, testSchema),
-    ).toHaveProperty("artist", "Last Train");
-  });
 });
 
 describe("sanitiseData helper function", () => {
@@ -102,5 +78,9 @@ describe("sanitiseData helper function", () => {
   });
   test("should otherwise keep same string", () => {
     expect(sanitiseData("LaSt Train")).toBe("LaSt Train");
+  });
+
+  test("Input that has whitespace should be returned without", () => {
+    expect(sanitiseData("   Last Train")).toBe("Last Train");
   });
 });

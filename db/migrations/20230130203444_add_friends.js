@@ -6,7 +6,7 @@ exports.up = async function (knex) {
     CREATE TYPE activity AS ENUM ('horse','boules','climbing','volleyball','hiking','paragliding','yoga','spa');  
  
     CREATE TABLE "public"."${TABLE}" (
-      "id" UUID NOT NULL PRIMARY KEY,
+      "id" UUID default gen_random_uuid() NOT NULL PRIMARY KEY,
       "name" varchar(255) NOT NULL,
       "email" varchar(255) NOT NULL UNIQUE,
       "activities" activity ARRAY NOT NULL,

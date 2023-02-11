@@ -14,26 +14,16 @@ export const sanitiseData = (input: string | undefined): string => {
 };
 
 /**
- * Will remove whitespace from data and check against schema passed in as second argument
- * @returns sanitised data and throws error if the data isn't valid
+ * Will check against schema passed in as second argument
+ * @returns input if valid and throws error if the data isn't valid
  */
-export const validateData = <T extends Record<string, string>>(
+export const validateData = <T extends string | number | Record<string, any>>(
   input: T,
   schema: z.ZodSchema<T>,
 ): T => {
-  const newInput: T = input;
-  for (const key in input) {
-    if (Object.prototype.hasOwnProperty.call(input, key)) {
-      newInput[key] = sanitiseData(input[key] as string) as T[Extract<
-        keyof T,
-        string
-      >];
-    }
-  }
-
-  const isValid = schema.safeParse(newInput);
+  const isValid = schema.safeParse(input);
   if (!isValid.success) {
     throw new CustomZodError(isValid.error);
   }
-  return newInput as T;
+  return input as T;
 };
