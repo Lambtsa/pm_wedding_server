@@ -10,9 +10,17 @@ export const select = async ({
   log.info("Selecting the 3 last news articles");
 
   const search = await db
-    .select("*")
+    .select(
+      "news.id as id",
+      "translations.title as title",
+      "translations.description as description",
+      "translations.language as language",
+      "news.emoji as emoji",
+      "news.created_at as created_at",
+    )
     .from<News>("news")
-    .orderBy("created_at", "desc")
+    .innerJoin("translations", "news.id", "translations.news_id")
+    .orderBy("news.created_at", "desc")
     .limit(3);
 
   return search;

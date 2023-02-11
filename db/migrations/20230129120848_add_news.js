@@ -4,11 +4,8 @@ const TABLE = "news";
 exports.up = async function (knex) {
   await knex.schema.raw(/* sql */ `
     CREATE TABLE "public"."${TABLE}" (
-      "id" UUID NOT NULL PRIMARY KEY,
-      "title" varchar(255) NOT NULL,
+      "id" UUID default gen_random_uuid() NOT NULL PRIMARY KEY,
       "emoji" varchar(1) NOT NULL,
-      "description" varchar(255) NOT NULL,
-      UNIQUE ("title", "description"),
       "created_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updated_at" timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

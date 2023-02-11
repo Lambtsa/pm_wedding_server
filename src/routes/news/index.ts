@@ -5,35 +5,59 @@ import {
   BadRequestError,
   MethodNotAllowedError,
 } from "@core/errors";
-import { validateData } from "@helpers/sanitise";
-import { News } from "@modules";
+import { sanitiseData, validateData } from "@helpers/sanitise";
+import { News, Translation } from "@modules";
 import * as z from "zod";
 import { TypeOf } from "zod";
 import { randomEmoji } from "@helpers/emoji";
 import { decodeToken } from "@helpers/jwt";
 import WebSocket from "ws";
+import { Languages } from "@types";
+import { Knex } from "knex";
 
 const router = express.Router();
 
 const newsInputDataSchema = z.object({
-  title: z.string().min(1).max(20),
-  description: z.string().min(1).max(140),
+  EN: z.object({
+    title: z.string().min(1).max(20),
+    description: z.string().min(1).max(140),
+  }),
+  FR: z.object({
+    title: z.string().min(1).max(20),
+    description: z.string().min(1).max(140),
+  }),
+  ES: z.object({
+    title: z.string().min(1).max(20),
+    description: z.string().min(1).max(140),
+  }),
 });
 
 type NewsInputType = TypeOf<typeof newsInputDataSchema>;
 
 router.post("/", async (req: Request, res: Response, next: NextFunction) => {
+  req.context.log.info({ body: req.body });
   try {
     /* ######################################## */
     /* Request parsing */
     /* ######################################## */
     const {
-      body: { title: rawTitle, description: rawDescription },
+      body: {
+        EN: { title: enRawTitle, description: enRawDescription },
+        ES: { title: esRawTitle, description: esRawDescription },
+        FR: { title: frRawTitle, description: frRawDescription },
+      },
       context,
       headers: { authorization },
     } = req;
 
-    if (!rawTitle && !rawDescription) {
+    if (
+      !enRawTitle ||
+      !enRawDescription ||
+      !esRawTitle ||
+      !esRawDescription ||
+      !frRawTitle ||
+      !frRawDescription
+    ) {
       next(new BadRequestError());
     }
 
@@ -58,23 +82,67 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     /* ######################################## */
     /* DATA Validation */
     /* ######################################## */
-    const { title, description } = validateData<Omit<NewsInputType, "emoji">>(
+    const { EN, FR, ES } = validateData<NewsInputType>(
       {
-        title: rawTitle,
-        description: rawDescription,
+        EN: {
+          title: sanitiseData(enRawTitle),
+          description: sanitiseData(enRawDescription),
+        },
+        FR: {
+          title: sanitiseData(frRawTitle),
+          description: sanitiseData(frRawDescription),
+        },
+        ES: {
+          title: sanitiseData(esRawTitle),
+          description: sanitiseData(esRawDescription),
+        },
       },
       newsInputDataSchema,
     );
 
     const emoji = randomEmoji();
 
-    await News.db.insert({
-      context,
-      input: {
-        title,
-        description,
-        emoji,
-      },
+    await context.db.transaction(async (trx: Knex.Transaction) => {
+      const news = await News.db.insert(
+        context,
+        {
+          emoji,
+        },
+        trx,
+      );
+
+      await Promise.all([
+        await Translation.db.insert(
+          context,
+          {
+            title: EN.title,
+            description: EN.description,
+            news_id: news.id,
+            language: Languages.En,
+          },
+          trx,
+        ),
+        await Translation.db.insert(
+          context,
+          {
+            title: FR.title,
+            description: FR.description,
+            news_id: news.id,
+            language: Languages.Fr,
+          },
+          trx,
+        ),
+        await Translation.db.insert(
+          context,
+          {
+            title: ES.title,
+            description: ES.description,
+            news_id: news.id,
+            language: Languages.Es,
+          },
+          trx,
+        ),
+      ]);
     });
 
     const recentNews = await News.db.select({ context });
@@ -88,9 +156,18 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
     });
 
     return res.status(200).json({
-      title,
-      description,
-      emoji,
+      EN: {
+        ...EN,
+        emoji,
+      },
+      ES: {
+        ...ES,
+        emoji,
+      },
+      FR: {
+        ...FR,
+        emoji,
+      },
     });
   } catch (err) {
     console.log({ err });
